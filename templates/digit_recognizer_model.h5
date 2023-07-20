@@ -1,0 +1,41 @@
+import os
+import cv2
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
+x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+input_shape = (28, 28, 1)
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
+x_train /= 255
+x_test /= 255
+print('x_train shape:', x_train.shape)
+print('Number of images in x_train', x_train.shape[0])
+print('Number of images in x_test', x_test.shape[0])
+
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, kernel_size=(3, 3), input_shape=input_shape),
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    tf.keras.layers.Conv2D(32, kernel_size=(3, 3)),
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(256, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+model.summary()
+
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Training the model
+model.fit(x=x_train, y=y_train, epochs=1)
+
+# Saving the model to a file
+model.save('digit_recognizer_model.h5')

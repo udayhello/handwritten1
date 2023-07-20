@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digit Recognizer</title>
+    <script>
+        function predictDigit() {
+            // Retrieve the image data from the input field
+            var imageFile = document.getElementById('image-file').files[0];
+
+            // Create a FormData object to send the image file to the server
+            var formData = new FormData();
+            formData.append('image', imageFile);
+
+            // Use Fetch API to send a POST request to the Flask server
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the result element with the predicted digit
+                document.getElementById('result').innerText = "This digit is probably a " + data.prediction;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Digit Recognizer</h1>
+    <input type="file" id="image-file">
+    <button onclick="predictDigit()">Predict Digit</button>
+    <div id="result"></div>
+</body>
+</html>
